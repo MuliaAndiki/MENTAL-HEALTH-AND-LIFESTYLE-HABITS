@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+#barchart {
+  margin: auto;
+  width: 95%;
+}
+.bar {
+  stroke: #fff;
+  stroke-width: 1px;
+}
+.x-axis text {
+  text-anchor: middle;
+  font-size: 12px;
+}
+.y-axis text {
+  font-size: 12px;
+}
+.country-label {
+  text-anchor: middle;
+  font-weight: bold;
+  font-size: 16px;
+}
+.condition-group {
+  stroke: #ddd;
+  stroke-width: 1px;
+  stroke-dasharray: 2, 2;
+  fill: none;
+}
+.condition-label {
+  text-anchor: middle;
+  font-size: 12px;
+  font-weight: bold;
+}
+.legend {
+  display: flex;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+  margin-bottom: 10px;
+}
+.legend-color {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+.chart-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+.axis-label {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.axis-label {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.legend-color {
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+}
+
+.legend {
+  display: flex;
+  margin-top: 10px;
+}
