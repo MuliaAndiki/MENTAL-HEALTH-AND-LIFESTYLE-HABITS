@@ -2,7 +2,8 @@
 
 body {
   font-family: Arial, sans-serif;
-  margin: 20px;
+  margin: 0;
+  padding: 0;
 }
 #barchart {
   margin: auto;
@@ -122,12 +123,12 @@ circle {
   stroke-width: 2px;
 }
 
-.bar {
+/* .bar {
   fill: steelblue;
 }
 .bar:hover {
   fill: purple;
-}
+} */
 .tooltip {
   position: absolute;
   background: black;

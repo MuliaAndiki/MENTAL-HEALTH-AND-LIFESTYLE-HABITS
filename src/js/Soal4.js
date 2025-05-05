@@ -1,5 +1,5 @@
 const svg = d3.select("svg"),
-  margin = { top: 30, right: 30, bottom: 70, left: 50 },
+  margin = { top: 30, right: 100, bottom: 70, left: 50 }, // Perbesar margin kanan untuk legenda
   width = +svg.attr("width") - margin.left - margin.right,
   height = +svg.attr("height") - margin.top - margin.bottom,
   g = svg
@@ -39,6 +39,13 @@ d3.csv("data.csv").then(function (data) {
     .nice()
     .range([height, 0]);
 
+  // Buat skala warna untuk tipe diet yang berbeda
+  const color = d3
+    .scaleOrdinal()
+    .domain(chartData.map((d) => d.type))
+    .range(d3.schemeCategory10);
+
+  // Tambahkan sumbu X
   g.append("g")
     .attr("transform", `translate(0,${height})`)
     .call(d3.axisBottom(x))
@@ -46,9 +53,12 @@ d3.csv("data.csv").then(function (data) {
     .attr("transform", "rotate(-30)")
     .style("text-anchor", "end");
 
+  // Tambahkan sumbu Y
   g.append("g").call(d3.axisLeft(y));
 
-  g.selectAll(".bar")
+  // Buat batang chart
+  const bars = g
+    .selectAll(".bar")
     .data(chartData)
     .enter()
     .append("rect")
@@ -57,14 +67,50 @@ d3.csv("data.csv").then(function (data) {
     .attr("y", (d) => y(d.avg))
     .attr("width", x.bandwidth())
     .attr("height", (d) => height - y(d.avg))
-    .on("mouseover", (event, d) => {
+    .attr("fill", (d) => color(d.type))
+    .style("transition", "fill 0.3s") // Animasi perubahan warna
+    .on("mouseover", function (event, d) {
+      // Gelapkan warna saat hover
+      d3.select(this).attr("fill", d3.color(color(d.type)).darker(0.5));
+
       tooltip.transition().duration(200).style("opacity", 1);
       tooltip
         .html(`Diet: ${d.type}<br>Avg Stress: ${d.avg.toFixed(2)}`)
         .style("left", event.pageX + 10 + "px")
         .style("top", event.pageY - 28 + "px");
     })
-    .on("mouseout", () =>
-      tooltip.transition().duration(300).style("opacity", 0)
-    );
+    .on("mouseout", function () {
+      // Kembalikan warna asli
+      const d = d3.select(this).datum();
+      d3.select(this).attr("fill", color(d.type));
+      tooltip.transition().duration(300).style("opacity", 0);
+    });
+
+  // // Tambahkan legenda
+  // const legend = g
+  //   .append("g")
+  //   .attr("transform", `translate(${width + 20}, 20)`); // Posisi legenda di kanan chart
+
+  // const legendItems = legend
+  //   .selectAll(".legend-item")
+  //   .data(chartData)
+  //   .enter()
+  //   .append("g")
+  //   .attr("class", "legend-item")
+  //   .attr("transform", (d, i) => `translate(0, ${i * 25})`); // Jarak antar item legenda
+
+  // // Tambahkan kotak warna
+  // legendItems
+  //   .append("rect")
+  //   .attr("width", 18)
+  //   .attr("height", 18)
+  //   .attr("fill", (d) => color(d.type));
+
+  // // Tambahkan teks
+  // legendItems
+  //   .append("text")
+  //   .attr("x", 24)
+  //   .attr("y", 9)
+  //   .attr("dy", "0.35em")
+  //   .text((d) => d.type);
 });
