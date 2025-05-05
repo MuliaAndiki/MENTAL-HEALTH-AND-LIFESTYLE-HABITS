@@ -138,3 +138,29 @@ circle {
   opacity: 0;
   pointer-events: none;
 }
+
+
+.tooltip {
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.legend {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legend-color {
+  width: 15px;
+  height: 15px;
+  border: 1px solid #ddd;
+}
