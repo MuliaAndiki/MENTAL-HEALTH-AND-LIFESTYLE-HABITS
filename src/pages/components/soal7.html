@@ -3,18 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      Stacked Bar Chart - Mental Health Conditions by Country with Stress Level
-      Colors
-    </title>
+
+    <title>Soal7</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/style1dan2.css" />
+   
+    <link rel="stylesheet" href="/src/css/style.css" />
   </head>
   <body>
     <main class="overflow-hidden">
-      <div class="w-full h-full">
+      <div class="h-full w-full">
         <nav
           class="h-[5vh] flex justify-around items-center p-4 bg-gradient-to-l from-[#00B4D8] to-[#03045E] rounded-lg mt-2"
         >
@@ -30,8 +28,11 @@
           </div>
         </nav>
 
-        <div class="flex w-full justify-center items-center">
-          <div id="barchart"></div>
+        <div class="flex justify-center items-center w-full">
+          <svg id="scatter" width="800" height="500"></svg>
+        </div>
+        <div class="flex justify-center items-center w-full">
+          <svg id="boxplot" width="800" height="500"></svg>
         </div>
 
         <div
@@ -57,6 +58,7 @@
         </div>
       </div>
     </main>
-    <script src="/src/js/Soal2.js"></script>
+
+    <script src="/src/js/Soal7.js"></script>
   </body>
 </html>

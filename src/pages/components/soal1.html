@@ -10,13 +10,60 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/style1dan2.css" />
   </head>
   <body>
-    <div class="chart-title"></div>
-    <div class="flex justify-center items-center">
-      <div id="scatterplot"></div>
-    </div>
+    <main class="overflow-hidden">
+      <div class="w-full h-full">
+        <nav
+          class="h-[5vh] flex justify-around items-center p-4 bg-gradient-to-l from-[#00B4D8] to-[#03045E] rounded-lg mt-2"
+        >
+          <div class="flex items-center gap-4">
+            <a href="">
+              <img src="" alt="" />
+              <h1 class="text-[1rem] font-bold text-white">Kelompok 7</h1>
+            </a>
+          </div>
 
-    <script src="/src/js/main.js"></script>
+          <div class="flex justify-center items-center gap-[4rem]">
+            <a href="/">
+              <h1 class="font-bold text-white">Creator</h1>
+            </a>
+          </div>
+        </nav>
+
+        <div class="chart-title"></div>
+        <div class="flex justify-center items-center">
+          <div id="scatterplot"></div>
+        </div>
+      </div>
+
+      <div class="justify-center items-center flex">
+        <h1 class="">Cara Baca</h1>
+      </div>
+      <div
+        class="w-full bg-gradient-to-l from-[#00B4D8] to-[#03045E] h-[30vh] flex justify-center items-center mt-4"
+      >
+        <footer
+          class="flex flex-col sm:flex-row justify-between items-center w-full px-6 py-4 bg-gray-100 border-t border-gray-300 text-gray-700 text-sm"
+        >
+          <div class="mb-2 sm:mb-0 text-center sm:text-left">
+            <h1 class="font-semibold text-base">
+              Visualisasi Kesehatan Mental & Gaya Hidup
+            </h1>
+            <p>
+              Memberikan wawasan melalui data seputar kebahagiaan dan aktivitas
+              fisik.
+            </p>
+          </div>
+          <div class="text-center sm:text-right">
+            <p>Dibuat dengan Jupyter Notebook dan D3.js</p>
+            <p>&copy; 2025 - Kelompok 7</p>
+          </div>
+        </footer>
+      </div>
+    </main>
+
+    <script src="/src/js/Soal1.js"></script>
   </body>
 </html>
