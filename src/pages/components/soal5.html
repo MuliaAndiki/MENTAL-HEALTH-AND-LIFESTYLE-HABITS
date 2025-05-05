@@ -3,16 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      Stacked Bar Chart - Mental Health Conditions by Country with Stress Level
-      Colors
-    </title>
+    <title>Document</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <main class="overflow-hidden">
+    <main>
       <div class="w-full h-full">
         <nav
           class="h-[5vh] flex justify-around items-center p-4 bg-gradient-to-l from-[#00B4D8] to-[#03045E] rounded-lg mt-2"
@@ -29,7 +25,9 @@
           </div>
         </nav>
 
-        <div id="barchart"></div>
+        <div class="flex justify-center items-center w-full">
+          <svg id="violin" width="960" height="500" class="py-3"></svg>
+        </div>
 
         <div
           class="w-full bg-gradient-to-l from-[#00B4D8] to-[#03045E] h-[30vh] flex justify-center items-center mt-4"
@@ -55,6 +53,6 @@
       </div>
     </main>
 
-    <script src="/src/js/Soal1-2.js"></script>
+    <script src="/src/js/Soal5.js"></script>
   </body>
 </html>

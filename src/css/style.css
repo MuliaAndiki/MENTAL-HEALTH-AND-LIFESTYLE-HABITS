@@ -85,3 +85,56 @@ body {
   display: flex;
   margin-top: 10px;
 }
+circle {
+  opacity: 0.5;
+}
+.box {
+  fill: steelblue;
+  opacity: 0.6;
+}
+.median {
+  stroke: black;
+  stroke-width: 2px;
+}
+
+#chart {
+  flex: 2;
+}
+#summary {
+  flex: 1;
+  padding-left: 30px;
+}
+.tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  pointer-events: none;
+}
+.box {
+  fill-opacity: 0.5;
+  stroke: black;
+}
+.median {
+  stroke: black;
+  stroke-width: 2px;
+}
+
+.bar {
+  fill: steelblue;
+}
+.bar:hover {
+  fill: purple;
+}
+.tooltip {
+  position: absolute;
+  background: black;
+  color: white;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 12px;
+  opacity: 0;
+  pointer-events: none;
+}
