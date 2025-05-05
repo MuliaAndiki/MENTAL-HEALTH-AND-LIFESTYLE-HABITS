@@ -159,7 +159,6 @@ class ScatterPlot {
       .attr("stroke-dasharray", "5,3");
 
     // Legend for scatter plot
-    const stressLevels = ["Low", "Moderate", "High"];
 
     const legendGroup = vis.svg
       .append("g")
