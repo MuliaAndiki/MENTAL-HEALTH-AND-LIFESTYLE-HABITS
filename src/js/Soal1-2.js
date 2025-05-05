@@ -17,9 +17,25 @@ d3.csv("data.csv")
       d.Exercise = d["Exercise"] || "Unknown";
     });
 
+    // Create tooltip div
+    const tooltip = d3.select("body")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0)
+      .style("position", "absolute")
+      .style("background-color", "white")
+      .style("border", "1px solid #ddd")
+      .style("border-radius", "5px")
+      .style("padding", "10px")
+      .style("box-shadow", "2px 2px 6px rgba(0,0,0,0.3)")
+      .style("pointer-events", "none")
+      .style("font-size", "14px")
+      .style("z-index", "10");
+
     const scatterplot = new ScatterPlot(
       {
         parentElement: "#scatterplot",
+        tooltip: tooltip
       },
       data
     );
@@ -52,6 +68,7 @@ d3.csv("data.csv")
     const barchart = new Barchart(
       {
         parentElement: "#barchart",
+        tooltip: tooltip
       },
       processedData,
       mentalHealthConditions,
@@ -74,6 +91,7 @@ class Barchart {
     this.margin = { top: 40, right: 100, bottom: 150, left: 80 };
     this.width = 1200 - this.margin.left - this.margin.right; // Increased width
     this.height = 500 - this.margin.top - this.margin.bottom;
+    this.tooltip = _config.tooltip;
 
     // Create SVG container
     this.svg = d3
@@ -205,7 +223,45 @@ class Barchart {
           .attr("width", xConditionScale.bandwidth())
           .attr("height", (d) => yScale(d[0]) - yScale(d[1]))
           .attr("stroke", "white")
-          .attr("stroke-width", 1);
+          .attr("stroke-width", 1)
+          // Add hover effects and tooltip functionality
+          .on("mouseover", function(event, d) {
+            // Highlight the bar
+            d3.select(this)
+              .attr("stroke", "#333")
+              .attr("stroke-width", 2)
+              .attr("opacity", 1);
+              
+            // Get data properties from parent
+            const parentData = d3.select(this.parentNode).datum();
+            const stressLevel = parentData.key;
+            const value = d[1] - d[0];
+            
+            // Show tooltip with information
+            vis.tooltip.transition()
+              .duration(200)
+              .style("opacity", 0.9);
+            vis.tooltip.html(`
+              <strong>Country:</strong> ${country}<br>
+              <strong>Condition:</strong> ${condition}<br>
+              <strong>Stress Level:</strong> ${stressLevel}<br>
+              <strong>Count:</strong> ${value}
+            `)
+              .style("left", (event.pageX + 10) + "px")
+              .style("top", (event.pageY - 28) + "px");
+          })
+          .on("mouseout", function() {
+            // Restore normal appearance
+            d3.select(this)
+              .attr("stroke", "white")
+              .attr("stroke-width", 1)
+              .attr("opacity", 1);
+              
+            // Hide tooltip
+            vis.tooltip.transition()
+              .duration(500)
+              .style("opacity", 0);
+          });
       });
     });
 
@@ -294,17 +350,27 @@ class Barchart {
     const legend = d3
       .select(vis.config.parentElement)
       .append("div")
-      .attr("class", "legend");
+      .attr("class", "legend")
+      .style("display", "flex")
+      .style("justify-content", "center")
+      .style("margin-top", "10px");
 
     vis.stressLevels.forEach((level) => {
-      const legendItem = legend.append("div").attr("class", "legend-item");
+      const legendItem = legend.append("div")
+        .attr("class", "legend-item")
+        .style("display", "flex")
+        .style("align-items", "center")
+        .style("margin", "0 10px");
 
       legendItem
         .append("div")
         .attr("class", "legend-color")
-        .style("background-color", colorScale(level));
+        .style("width", "12px")
+        .style("height", "12px")
+        .style("background-color", colorScale(level))
+        .style("margin-right", "5px");
 
-      legendItem.append("div").text(`${level} `);
+      legendItem.append("div").text(level);
     });
   }
 }
@@ -317,6 +383,7 @@ class ScatterPlot {
     this.margin = { top: 50, right: 50, bottom: 60, left: 60 };
     this.width = 800 - this.margin.left - this.margin.right;
     this.height = 500 - this.margin.top - this.margin.bottom;
+    this.tooltip = _config.tooltip;
 
     this.svg = d3
       .select(this.config.parentElement)
@@ -326,10 +393,9 @@ class ScatterPlot {
       .append("g")
       .attr("transform", `translate(${this.margin.left},${this.margin.top})`);
 
-    // Define color scale for Exercise level (Low, Moderate, High)
-    this.colorScale = d3
-      .scaleOrdinal()
-      .domain(["Low", "Moderate", "High"])
+    // Use a single color as in original code
+    this.colorScale = d3.scaleOrdinal()
+      .domain(["default"])
       .range(["#f44336"]);
   }
 
@@ -382,7 +448,7 @@ class ScatterPlot {
       .style("font-weight", "bold")
       .text("Hubungan antara Jumlah Tidur dan Tingkat Kebahagiaan");
 
-    // Scatter dots (with color based on Exercise level)
+    // Scatter dots with hover functionality
     vis.svg
       .selectAll(".dot")
       .data(vis.data)
@@ -391,9 +457,52 @@ class ScatterPlot {
       .attr("class", "dot")
       .attr("cx", (d) => xScale(d.SleepHours))
       .attr("cy", (d) => yScale(d.HappinessScore))
-      .attr("r", 4)
-      .attr("fill", (d) => vis.colorScale(d.Exercise)) // Use Exercise category for color
-      .attr("opacity", 0.7);
+      .attr("r", 5)
+      .attr("fill", (d) => vis.colorScale("default"))
+      .attr("opacity", 0.7)
+      .attr("stroke", "#fff")
+      .attr("stroke-width", 1)
+      // Add hover effects
+      .on("mouseover", function(event, d) {
+        // Enlarge dot and make it more opaque
+        d3.select(this)
+          .transition()
+          .duration(200)
+          .attr("r", 8)
+          .attr("opacity", 1)
+          .attr("stroke", "#333")
+          .attr("stroke-width", 2);
+          
+        // Show tooltip with data information
+        vis.tooltip.transition()
+          .duration(200)
+          .style("opacity", 0.9);
+        vis.tooltip.html(`
+          <strong>Sleep Hours:</strong> ${d.SleepHours}<br>
+          <strong>Happiness Score:</strong> ${d.HappinessScore}<br>
+          <strong>Exercise:</strong> ${d.Exercise}<br>
+
+          <strong>Stress Level:</strong> ${d["Stress Level"] || "Unknown"}<br>
+          <strong>Country:</strong> ${d.Country}
+        `)
+          .style("left", (event.pageX + 10) + "px")
+          .style("top", (event.pageY - 28) + "px");
+      })
+      .on("mouseout", function() {
+        // Return to normal size and opacity
+        d3.select(this)
+          .transition()
+          .duration(500)
+          .attr("r", 5)
+          .attr("opacity", 0.7)
+          .attr("stroke", "#fff")
+          .attr("stroke-width", 1);
+          
+        // Hide tooltip
+        vis.tooltip.transition()
+          .duration(500)
+          .style("opacity", 0);
+      });
 
     // Trend line (linear regression)
     const xMean = d3.mean(vis.data, (d) => d.SleepHours);
@@ -423,5 +532,28 @@ class ScatterPlot {
       .attr("stroke", "red")
       .attr("stroke-width", 2)
       .attr("stroke-dasharray", "5,3");
+
+    // Legend for scatter plot - using stress levels
+    const legendGroup = vis.svg.append("g")
+      .attr("class", "legend")
+      .attr("transform", `translate(${vis.width - 150}, 20)`);
+    
+    legendData.forEach((level, i) => {
+      const legendRow = legendGroup.append("g")
+        .attr("transform", `translate(0, ${i * 20})`);
+      
+      legendRow.append("circle")
+        .attr("cx", 0)
+        .attr("cy", 0)
+        .attr("r", 6)
+        .attr("fill", vis.colorScale(level))
+        .attr("opacity", 0.7);
+      
+      legendRow.append("text")
+        .attr("x", 15)
+        .attr("y", 5)
+        .text(`${level} Stress`)
+        .style("font-size", "12px");
+    });
   }
 }
