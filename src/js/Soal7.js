@@ -9,9 +9,10 @@ d3.csv("data.csv").then((data) => {
   const conditions = Array.from(
     new Set(data.map((d) => d["Mental Health Condition"]))
   );
-  
-  // Create tooltip div that will be shared between visualizations
-  const tooltip = d3.select("body")
+
+  // Create tooltip div with improved styling and z-index
+  const tooltip = d3
+    .select("body")
     .append("div")
     .attr("class", "tooltip")
     .style("opacity", 0)
@@ -23,10 +24,13 @@ d3.csv("data.csv").then((data) => {
     .style("box-shadow", "2px 2px 6px rgba(0,0,0,0.3)")
     .style("pointer-events", "none")
     .style("font-size", "14px")
-    .style("z-index", "10");
+    .style("z-index", "999") // Pastikan z-index tinggi agar tidak tertutup elemen lain
+    .style("max-width", "250px")
+    .style("color", "#333");
 
   // Define a color scale for mental health conditions
-  const colorScale = d3.scaleOrdinal()
+  const colorScale = d3
+    .scaleOrdinal()
     .domain(conditions)
     .range(d3.schemeCategory10);
 
@@ -38,7 +42,8 @@ d3.csv("data.csv").then((data) => {
       height = +svg.attr("height") - margin.top - margin.bottom;
 
     // Add a background rectangle
-    svg.append("rect")
+    svg
+      .append("rect")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .attr("fill", "#f9f9f9")
@@ -59,8 +64,8 @@ d3.csv("data.csv").then((data) => {
       .append("line")
       .attr("x1", 0)
       .attr("x2", width)
-      .attr("y1", d => y(d))
-      .attr("y2", d => y(d))
+      .attr("y1", (d) => y(d))
+      .attr("y2", (d) => y(d))
       .attr("stroke", "#e0e0e0")
       .attr("stroke-width", 1);
 
@@ -73,7 +78,7 @@ d3.csv("data.csv").then((data) => {
       .style("text-anchor", "end")
       .style("font-size", "12px")
       .style("font-family", "Arial");
-      
+
     g.append("g")
       .call(d3.axisLeft(y))
       .selectAll("text")
@@ -98,7 +103,7 @@ d3.csv("data.csv").then((data) => {
       .style("font-weight", "bold")
       .text("Social Interaction Score");
 
-    // Create dots with hover effects
+    // Create dots with improved hover effects
     g.selectAll("circle")
       .data(data)
       .enter()
@@ -109,11 +114,14 @@ d3.csv("data.csv").then((data) => {
       )
       .attr("cy", (d) => y(d["Social Interaction Score"]))
       .attr("r", 6)
-      .attr("fill", d => colorScale(d["Mental Health Condition"]))
+      .attr("fill", (d) => colorScale(d["Mental Health Condition"]))
       .attr("stroke", "#fff")
       .attr("stroke-width", 1.5)
       .attr("opacity", 0.7)
-      .on("mouseover", function(event, d) {
+      .on("mouseover", function (event, d) {
+        // Perbaikan event hover - print untuk debugging
+        console.log("Hovering over point:", d);
+
         // Enlarge the dot on hover
         d3.select(this)
           .transition()
@@ -121,23 +129,25 @@ d3.csv("data.csv").then((data) => {
           .attr("r", 9)
           .attr("opacity", 1)
           .attr("stroke", "#333");
-          
-        // Show tooltip with information
-        tooltip.transition()
-          .duration(200)
-          .style("opacity", 0.9);
-          
-        tooltip.html(`
-          <strong>Condition:</strong> ${d["Mental Health Condition"]}<br>
-          <strong>Social Score:</strong> ${d["Social Interaction Score"]}<br>
-          <strong>Age:</strong> ${d["Age"] || "Unknown"}<br>
-          <strong>Gender:</strong> ${d["Gender"] || "Unknown"}<br>
-          <strong>Country:</strong> ${d["Country"] || "Unknown"}
-        `)
-          .style("left", (event.pageX + 10) + "px")
-          .style("top", (event.pageY - 28) + "px");
+
+        // Show tooltip with information - simplify positioning
+        tooltip
+          .html(
+            `
+            <strong>Condition:</strong> ${d["Mental Health Condition"]}<br>
+            <strong>Social Score:</strong> ${d["Social Interaction Score"]}<br>
+            <strong>Age:</strong> ${d["Age"] || "Unknown"}<br>
+            <strong>Gender:</strong> ${d["Gender"] || "Unknown"}<br>
+            <strong>Country:</strong> ${d["Country"] || "Unknown"}
+          `
+          )
+          .style("left", event.pageX + 15 + "px")
+          .style("top", event.pageY - 30 + "px");
+
+        // Perhatikan urutan - opacity diatur setelah posisi
+        tooltip.transition().duration(200).style("opacity", 0.95);
       })
-      .on("mouseout", function() {
+      .on("mouseout", function () {
         // Return to normal size
         d3.select(this)
           .transition()
@@ -145,15 +155,14 @@ d3.csv("data.csv").then((data) => {
           .attr("r", 6)
           .attr("opacity", 0.7)
           .attr("stroke", "#fff");
-          
+
         // Hide tooltip
-        tooltip.transition()
-          .duration(500)
-          .style("opacity", 0);
+        tooltip.transition().duration(500).style("opacity", 0);
       });
 
     // Add title with better styling
-    svg.append("text")
+    svg
+      .append("text")
       .attr("x", width / 2 + margin.left)
       .attr("y", margin.top / 2)
       .attr("text-anchor", "middle")
@@ -161,21 +170,28 @@ d3.csv("data.csv").then((data) => {
       .attr("font-weight", "bold")
       .attr("font-family", "Arial")
       .text("Social Interaction Score by Mental Health Condition");
-      
+
     // Add legend
-    const legend = svg.append("g")
-      .attr("transform", `translate(${width + margin.left - 20}, ${margin.top + 20})`);
-      
+    const legend = svg
+      .append("g")
+      .attr(
+        "transform",
+        `translate(${width + margin.left - 20}, ${margin.top + 20})`
+      );
+
     conditions.forEach((condition, i) => {
-      const legendRow = legend.append("g")
+      const legendRow = legend
+        .append("g")
         .attr("transform", `translate(0, ${i * 25})`);
-        
-      legendRow.append("rect")
+
+      legendRow
+        .append("rect")
         .attr("width", 15)
         .attr("height", 15)
         .attr("fill", colorScale(condition));
-        
-      legendRow.append("text")
+
+      legendRow
+        .append("text")
         .attr("x", 25)
         .attr("y", 12)
         .text(condition)
@@ -192,7 +208,8 @@ d3.csv("data.csv").then((data) => {
       height = +svg.attr("height") - margin.top - margin.bottom;
 
     // Add a background rectangle
-    svg.append("rect")
+    svg
+      .append("rect")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .attr("fill", "#f9f9f9")
@@ -213,8 +230,8 @@ d3.csv("data.csv").then((data) => {
       .append("line")
       .attr("x1", 0)
       .attr("x2", width)
-      .attr("y1", d => y(d))
-      .attr("y2", d => y(d))
+      .attr("y1", (d) => y(d))
+      .attr("y2", (d) => y(d))
       .attr("stroke", "#e0e0e0")
       .attr("stroke-width", 1);
 
@@ -227,7 +244,7 @@ d3.csv("data.csv").then((data) => {
       .style("text-anchor", "end")
       .style("font-size", "12px")
       .style("font-family", "Arial");
-      
+
     g.append("g")
       .call(d3.axisLeft(y))
       .selectAll("text")
@@ -255,7 +272,7 @@ d3.csv("data.csv").then((data) => {
     // Group data
     const grouped = d3.groups(data, (d) => d["Mental Health Condition"]);
 
-    // Create box plots with hover effects
+    // Create box plots with improved hover effects
     grouped.forEach(([cond, values]) => {
       const scores = values
         .map((d) => d["Social Interaction Score"])
@@ -267,13 +284,13 @@ d3.csv("data.csv").then((data) => {
       const max = d3.max(scores);
 
       const xPos = x(cond);
-      
+
       // Calculate summary stats for tooltip
       const mean = d3.mean(scores).toFixed(2);
       const stdDev = d3.deviation(scores).toFixed(2);
       const count = scores.length;
 
-      // Draw box with hover effects
+      // Draw box with improved hover effects
       g.append("rect")
         .attr("x", xPos - 25)
         .attr("y", y(q3))
@@ -283,48 +300,50 @@ d3.csv("data.csv").then((data) => {
         .attr("fill-opacity", 0.7)
         .attr("stroke", "black")
         .attr("stroke-width", 1)
-        .on("mouseover", function(event) {
+        .on("mouseover", function (event) {
+          console.log("Hovering over box for:", cond);
+
           // Highlight the box
           d3.select(this)
             .transition()
             .duration(200)
             .attr("fill-opacity", 0.9)
             .attr("stroke-width", 2);
-            
-          // Show tooltip with detailed statistics
-          tooltip.transition()
-            .duration(200)
-            .style("opacity", 0.9);
-            
-          tooltip.html(`
-            <strong>${cond}</strong><br>
-            <strong>Min:</strong> ${min}<br>
-            <strong>Q1:</strong> ${q1}<br>
-            <strong>Median:</strong> ${median}<br>
-            <strong>Q3:</strong> ${q3}<br>
-            <strong>Max:</strong> ${max}<br>
-            <strong>Mean:</strong> ${mean}<br>
-            <strong>Std Dev:</strong> ${stdDev}<br>
-            <strong>Sample size:</strong> ${count}
-          `)
-            .style("left", (event.pageX + 10) + "px")
-            .style("top", (event.pageY - 28) + "px");
+
+          // Show tooltip with detailed statistics - simplify positioning
+          tooltip
+            .html(
+              `
+              <strong>${cond}</strong><br>
+              <strong>Min:</strong> ${min}<br>
+              <strong>Q1:</strong> ${q1}<br>
+              <strong>Median:</strong> ${median}<br>
+              <strong>Q3:</strong> ${q3}<br>
+              <strong>Max:</strong> ${max}<br>
+              <strong>Mean:</strong> ${mean}<br>
+              <strong>Std Dev:</strong> ${stdDev}<br>
+              <strong>Sample size:</strong> ${count}
+            `
+            )
+            .style("left", event.pageX + 15 + "px")
+            .style("top", event.pageY - 30 + "px");
+
+          // Set opacity after positioning
+          tooltip.transition().duration(200).style("opacity", 0.95);
         })
-        .on("mouseout", function() {
+        .on("mouseout", function () {
           // Return to normal appearance
           d3.select(this)
             .transition()
             .duration(500)
             .attr("fill-opacity", 0.7)
             .attr("stroke-width", 1);
-            
+
           // Hide tooltip
-          tooltip.transition()
-            .duration(500)
-            .style("opacity", 0);
+          tooltip.transition().duration(500).style("opacity", 0);
         });
 
-      // Median line with hover effect
+      // Median line with improved hover effect
       g.append("line")
         .attr("x1", xPos - 25)
         .attr("x2", xPos + 25)
@@ -332,36 +351,32 @@ d3.csv("data.csv").then((data) => {
         .attr("y2", y(median))
         .attr("stroke", "black")
         .attr("stroke-width", 2)
-        .on("mouseover", function(event) {
+        .on("mouseover", function (event) {
+          console.log("Hovering over median for:", cond);
+
           // Highlight the median line
-          d3.select(this)
-            .transition()
-            .duration(200)
-            .attr("stroke-width", 3);
-            
-          // Show tooltip
-          tooltip.transition()
-            .duration(200)
-            .style("opacity", 0.9);
-            
-          tooltip.html(`
-            <strong>${cond}</strong><br>
-            <strong>Median:</strong> ${median}
-          `)
-            .style("left", (event.pageX + 10) + "px")
-            .style("top", (event.pageY - 28) + "px");
+          d3.select(this).transition().duration(200).attr("stroke-width", 3);
+
+          // Show tooltip - simplify positioning
+          tooltip
+            .html(
+              `
+              <strong>${cond}</strong><br>
+              <strong>Median:</strong> ${median}
+            `
+            )
+            .style("left", event.pageX + 15 + "px")
+            .style("top", event.pageY - 30 + "px");
+
+          // Set opacity after positioning
+          tooltip.transition().duration(200).style("opacity", 0.95);
         })
-        .on("mouseout", function() {
+        .on("mouseout", function () {
           // Return to normal appearance
-          d3.select(this)
-            .transition()
-            .duration(500)
-            .attr("stroke-width", 2);
-            
+          d3.select(this).transition().duration(500).attr("stroke-width", 2);
+
           // Hide tooltip
-          tooltip.transition()
-            .duration(500)
-            .style("opacity", 0);
+          tooltip.transition().duration(500).style("opacity", 0);
         });
 
       // Min/max lines (whiskers)
@@ -373,7 +388,7 @@ d3.csv("data.csv").then((data) => {
         .attr("stroke", "black")
         .attr("stroke-width", 1.5)
         .attr("stroke-dasharray", "5,3");
-        
+
       g.append("line")
         .attr("x1", xPos)
         .attr("x2", xPos)
@@ -383,7 +398,7 @@ d3.csv("data.csv").then((data) => {
         .attr("stroke-width", 1.5)
         .attr("stroke-dasharray", "5,3");
 
-      // Min/max horizontal caps with hover effects
+      // Min/max horizontal caps with improved hover effects
       g.append("line")
         .attr("x1", xPos - 15)
         .attr("x2", xPos + 15)
@@ -391,38 +406,34 @@ d3.csv("data.csv").then((data) => {
         .attr("y2", y(min))
         .attr("stroke", "black")
         .attr("stroke-width", 1.5)
-        .on("mouseover", function(event) {
+        .on("mouseover", function (event) {
+          console.log("Hovering over min for:", cond);
+
           // Highlight the min line
-          d3.select(this)
-            .transition()
-            .duration(200)
-            .attr("stroke-width", 3);
-            
-          // Show tooltip
-          tooltip.transition()
-            .duration(200)
-            .style("opacity", 0.9);
-            
-          tooltip.html(`
-            <strong>${cond}</strong><br>
-            <strong>Minimum:</strong> ${min}
-          `)
-            .style("left", (event.pageX + 10) + "px")
-            .style("top", (event.pageY - 28) + "px");
+          d3.select(this).transition().duration(200).attr("stroke-width", 3);
+
+          // Show tooltip - simplify positioning
+          tooltip
+            .html(
+              `
+              <strong>${cond}</strong><br>
+              <strong>Minimum:</strong> ${min}
+            `
+            )
+            .style("left", event.pageX + 15 + "px")
+            .style("top", event.pageY - 30 + "px");
+
+          // Set opacity after positioning
+          tooltip.transition().duration(200).style("opacity", 0.95);
         })
-        .on("mouseout", function() {
+        .on("mouseout", function () {
           // Return to normal appearance
-          d3.select(this)
-            .transition()
-            .duration(500)
-            .attr("stroke-width", 1.5);
-            
+          d3.select(this).transition().duration(500).attr("stroke-width", 1.5);
+
           // Hide tooltip
-          tooltip.transition()
-            .duration(500)
-            .style("opacity", 0);
+          tooltip.transition().duration(500).style("opacity", 0);
         });
-        
+
       g.append("line")
         .attr("x1", xPos - 15)
         .attr("x2", xPos + 15)
@@ -430,41 +441,38 @@ d3.csv("data.csv").then((data) => {
         .attr("y2", y(max))
         .attr("stroke", "black")
         .attr("stroke-width", 1.5)
-        .on("mouseover", function(event) {
+        .on("mouseover", function (event) {
+          console.log("Hovering over max for:", cond);
+
           // Highlight the max line
-          d3.select(this)
-            .transition()
-            .duration(200)
-            .attr("stroke-width", 3);
-            
-          // Show tooltip
-          tooltip.transition()
-            .duration(200)
-            .style("opacity", 0.9);
-            
-          tooltip.html(`
-            <strong>${cond}</strong><br>
-            <strong>Maximum:</strong> ${max}
-          `)
-            .style("left", (event.pageX + 10) + "px")
-            .style("top", (event.pageY - 28) + "px");
+          d3.select(this).transition().duration(200).attr("stroke-width", 3);
+
+          // Show tooltip - simplify positioning
+          tooltip
+            .html(
+              `
+              <strong>${cond}</strong><br>
+              <strong>Maximum:</strong> ${max}
+            `
+            )
+            .style("left", event.pageX + 15 + "px")
+            .style("top", event.pageY - 30 + "px");
+
+          // Set opacity after positioning
+          tooltip.transition().duration(200).style("opacity", 0.95);
         })
-        .on("mouseout", function() {
+        .on("mouseout", function () {
           // Return to normal appearance
-          d3.select(this)
-            .transition()
-            .duration(500)
-            .attr("stroke-width", 1.5);
-            
+          d3.select(this).transition().duration(500).attr("stroke-width", 1.5);
+
           // Hide tooltip
-          tooltip.transition()
-            .duration(500)
-            .style("opacity", 0);
+          tooltip.transition().duration(500).style("opacity", 0);
         });
     });
 
     // Add title with better styling
-    svg.append("text")
+    svg
+      .append("text")
       .attr("x", width / 2 + margin.left)
       .attr("y", margin.top / 2)
       .attr("text-anchor", "middle")
@@ -472,55 +480,44 @@ d3.csv("data.csv").then((data) => {
       .attr("font-weight", "bold")
       .attr("font-family", "Arial")
       .text("Social Interaction Score Distribution by Mental Health Condition");
-      
+
     // Add legend
-    const legend = svg.append("g")
-      .attr("transform", `translate(${width + margin.left - 20}, ${margin.top + 20})`);
-      
+    const legend = svg
+      .append("g")
+      .attr(
+        "transform",
+        `translate(${width + margin.left - 20}, ${margin.top + 20})`
+      );
+
     conditions.forEach((condition, i) => {
-      const legendRow = legend.append("g")
+      const legendRow = legend
+        .append("g")
         .attr("transform", `translate(0, ${i * 25})`);
-        
-      legendRow.append("rect")
+
+      legendRow
+        .append("rect")
         .attr("width", 15)
         .attr("height", 15)
         .attr("fill", colorScale(condition));
-        
-      legendRow.append("text")
+
+      legendRow
+        .append("text")
         .attr("x", 25)
         .attr("y", 12)
         .text(condition)
         .style("font-size", "12px")
         .style("font-family", "Arial");
     });
-    
+
     // Add explanation text for box plot elements
-    const explanation = svg.append("g")
-      .attr("transform", `translate(${margin.left}, ${height + margin.top + 40})`);
-      
-    explanation.append("text")
-      .attr("x", 0)
-      .attr("y", 0)
-      .text("Box plot elements:")
-      .style("font-weight", "bold")
-      .style("font-size", "12px");
-      
-    explanation.append("text")
-      .attr("x", 0)
-      .attr("y", 20)
-      .text("• Box: Interquartile range (25th to 75th percentile)")
-      .style("font-size", "12px");
-      
-    explanation.append("text") 
-      .attr("x", 0)
-      .attr("y", 40)
-      .text("• Horizontal line: Median (50th percentile)")
-      .style("font-size", "12px");
-      
-    explanation.append("text")
-      .attr("x", 0) 
-      .attr("y", 60)
-      .text("• Whiskers: Min to 25th percentile and 75th percentile to max")
-      .style("font-size", "12px");
+    const explanation = svg
+      .append("g")
+      .attr(
+        "transform",
+        `translate(${margin.left}, ${height + margin.top + 40})`
+      );
   }
+
+  // Tambahkan debugging untuk membantu melihat jika tooltip dibuat dengan benar
+  console.log("Tooltip created:", tooltip.node());
 });
