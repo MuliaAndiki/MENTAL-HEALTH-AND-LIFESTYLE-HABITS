@@ -292,7 +292,7 @@ class Barchart {
       .attr("text-anchor", "middle")
       .style("font-size", "16px")
       .style("font-weight", "bold")
-      .text("Mental Health Conditions by Country and Stress Level");
+      .text("Gangguan Kesehatan Mental Berdasarkan Kategori Tingkat Stress");
 
     // Legend
     const legend = d3
