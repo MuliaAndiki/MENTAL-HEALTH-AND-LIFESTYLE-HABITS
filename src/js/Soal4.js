@@ -24,7 +24,7 @@ d3.csv("data.csv").then(function (data) {
   for (const [key, values] of grouped) {
     const avg = d3.mean(values, (d) => +d["Stress Level Numeric"]);
     if (!isNaN(avg)) {
-      chartData.push({ type: key, avg });
+      chartData.push({ type: key, avg: +avg.toFixed(2) });
     }
   }
 
@@ -35,7 +35,7 @@ d3.csv("data.csv").then(function (data) {
     .padding(0.4);
   const y = d3
     .scaleLinear()
-    .domain([0, d3.max(chartData, (d) => d.avg)])
+    .domain([1.8, d3.max(chartData, (d) => d.avg)])
     .nice()
     .range([height, 0]);
 
